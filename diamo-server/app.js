@@ -4,33 +4,41 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let cors = require('cors');
-let bodyParser = require('body-parser')
-let multer = require('multer')
+let bodyParser = require('body-parser');
+let multer = require('multer');
+let mongoose = require("mongoose");
 
 let indexRouter = require('./routes/index');
+let mediaConverterRouter = require('./routes/media-converter');
+let companiesRouter = require('./routes/companies');
 
 let app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(cors({origin: '*'}))
+app.use(cors({origin: '*'}));
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 const storageConfig = multer.diskStorage({
-  destination: (req, file, cb) =>{
+  destination: (req, file, cb) => {
     cb(null, "public/uploads");
   },
-  filename: (req, file, cb) =>{
+  filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
-app.use(multer({storage:storageConfig}).single("image"));
+app.use(multer({storage:storageConfig}).single("file"));
 
 app.use('/', indexRouter);
+app.use('/media', mediaConverterRouter);
+app.use('/companies', companiesRouter);
+
+let connectionString = "mongodb+srv://tyulyukov:buDFZ4ws9ShY3rw7@cluster0.docye.mongodb.net/DiamoDatabase?retryWrites=true&w=majority";
+mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) { if (err) console.error(err) } )
 
 app.use(function(req, res, next) {
   next(createError(404));

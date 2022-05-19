@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <span>Company name: </span><input id="companyName" type="text"><br>
+    <span>Company image: </span><input id="companyFile" type="file"><br>
+
+    <div style="margin-left: 15px">
+        <br>
+        <ul id="foodMenu">
+
+        </ul>
+        <br>
+
+        <span>Food name: </span><input id="foodName" type="text"><br>
+        <span>Food file: </span><input id="foodFile" type="file"><br>
+        <span>Food price: </span><input id="foodPrice" type="number"><br>
+        <button onclick="addFood()">add food</button><br>
+    </div>
+    <br>
+
+    <button onclick="createCompany()">create company</button>
+</div>
+
+<script>
+    let companyNameInput = document.getElementById("companyName")
+    let companyFileInput = document.getElementById("companyFile")
+
+    let foodNameInput = document.getElementById("foodName")
+    let foodFileInput = document.getElementById("foodFile")
+    let foodPriceInput = document.getElementById("foodPrice")
+
+    let foodMenuContainer = document.getElementById("foodMenu")
+    let foodMenu = []
+
+    function renderFoodMenu() {
+        foodMenuContainer.innerHTML = ''
+        for (const food of foodMenu) {
+            let li = document.createElement("li")
+            li.innerHTML = '<span>' + food.name + '</span><br>' +
+                '<img width="50" src="' + food.imageUrl + '"><br>' +
+                '<span>' + food.price + '</span>'
+
+            foodMenuContainer.appendChild(li)
+        }
+    }
+
+    function addFood() {
+        let data = new FormData()
+        data.append('file', foodFileInput.files[0])
+
+        fetch('/media/upload', {
+            method: 'POST',
+            body: data
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.imageUrl) {
+                let food = {
+                    name: foodNameInput.value,
+                    imageUrl: res.imageUrl,
+                    price: foodPriceInput.value
+                }
+
+                foodMenu.push(food)
+
+                renderFoodMenu()
+
+                foodNameInput.value = ''
+                foodPriceInput.value = 0
+                foodFileInput.files.pop()
+            }
+        })
+    }
+
+    function createCompany() {
+        let data = new FormData()
+        data.append('file', companyFileInput.files[0])
+
+        fetch('/media/upload', {
+            method: 'POST',
+            body: data
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.imageUrl) {
+                    let company = {
+                        name: companyNameInput.value,
+                        imageUrl: res.imageUrl,
+                        foodMenu: foodMenu
+                    }
+
+                    fetch('/companies', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(company)
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        console.log(res)
+
+                        companyNameInput.value = ''
+                        companyFileInput.files.pop()
+                    })
+                }
+            })
+
+
+    }
+</script>
+
+</body>
+</html>
