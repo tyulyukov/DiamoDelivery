@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 const storageConfig = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads");
+    cb(null, "public/temp");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname);
