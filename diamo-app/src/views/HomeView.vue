@@ -11,7 +11,7 @@
         </ul>
 
         <div class="text-end">
-          <button style="background-color: #E8D58C; border-radius: 30px; width: 175px" class="btn shadow">Начать</button>
+          <LoginPartial/>
         </div>
       </div>
     </div>
@@ -88,11 +88,14 @@ import { useStore } from 'vuex'
 import {computed} from "vue";
 import DiamoFooter from "@/components/DiamoFooter";
 import CompanyCard from "@/components/CompanyCard";
+import LoginPartial from "@/components/LoginPartial";
 
 export default {
   name: 'HomeView',
-  components: {CompanyCard, DiamoFooter},
+  components: {LoginPartial, CompanyCard, DiamoFooter},
   setup () {
+    document.title = "Главная | Diamo Delivery";
+
     const store = useStore()
     store.dispatch('getCity')
     store.dispatch('getCompanies')

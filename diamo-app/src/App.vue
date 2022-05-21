@@ -2,7 +2,14 @@
   <router-view/>
 </template>
 
-
+<script>
+export default {
+  name: 'App',
+  created() {
+    document.title = "Diamo Delivery";
+  }
+}
+</script>
 
 <style>
 #app {
