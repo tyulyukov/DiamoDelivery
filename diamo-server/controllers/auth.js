@@ -20,12 +20,12 @@ exports.middlewareAuth = function (req, res, next) {
 
 exports.authByEmail = async function (req, res){
     const email = req.body.email
-    const passwordHash = req.body.password // TODO SHA256 hash
+    const passwordHash = crypto.createHash('sha256').update(req.body.password).digest('hex');
 
     User.findOne( {email: email, passwordHash: passwordHash}, function (err, user) {
         if (err) {
             console.error(err)
-            return res.status(500).json({ message: 'MongoDB Error' })
+            return res.status(500).json({ message: 'Internal Error' })
         }
 
         if (!user) {
@@ -56,7 +56,7 @@ exports.register = async function (req, res){
 
     // TODO email, password, etc. validation
 
-    const passwordHash = password // TODO SHA256 hash
+    const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
 
     const newUser = new User()
     newUser.email = email
@@ -65,10 +65,10 @@ exports.register = async function (req, res){
     newUser.passwordHash = passwordHash
     newUser.isEmailVerified = false
 
-    newUser.save( function (err) {
+    newUser.save(function (err) {
         if (err) {
             console.error(err)
-            return res.status(500).json({ message: 'MongoDB Error' })
+            return res.status(500).json({ message: 'Internal Error' })
         }
 
         // TODO email verifying
