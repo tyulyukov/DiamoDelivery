@@ -33,9 +33,14 @@ const storageConfig = multer.diskStorage({
 });
 app.use(multer({storage:storageConfig}).single("file"));
 
+let authController = require('./controllers/auth')
+app.use(authController.middlewareAuth)
+
 app.use('/', indexRouter);
 app.use('/media', mediaConverterRouter);
 app.use('/companies', companiesRouter);
+app.post('/auth', authController.authByEmail)
+app.post('/register', authController.register)
 
 let connectionString = "mongodb+srv://tyulyukov:buDFZ4ws9ShY3rw7@cluster0.docye.mongodb.net/DiamoDatabase?retryWrites=true&w=majority";
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) { if (err) console.error(err) } )
