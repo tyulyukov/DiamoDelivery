@@ -34,14 +34,25 @@ export default {
                     if (res.status === 200) {
                         return res.json()
                     }
-                    else if (res.status === 404) {
+                    else if (res.status === 400) {
                         commit('loginError', 'Неправильный логин или пароль')
                     }
                     else if (res.status === 500) {
                         commit('loginError', 'Ошибка сервера')
                     }
                 })
-                .then(res => { commit('user', res.user); commit('jwt', res.token) })
+                .then(json => {
+                    if (json) {
+                        document.querySelector("body").style.overflow = 'auto'
+
+                        commit('loginError', null);
+                        commit('user', json.user);
+                        commit('jwt', json.token);
+
+                        commit('loginEmail', '');
+                        commit('loginPassword', '');
+                    }
+                })
                 .catch(err => commit('loginError', err))
         }
     }

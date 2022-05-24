@@ -99,7 +99,7 @@ export default {
 
 .bg-pizza {
   background-repeat: no-repeat;
-  background-image: url('https://www.dreamofenglish.com/wp-content/uploads/pizza-3007395_1920-1.jpg');
+  background-image: url('/src/assets/pizza.jpg');
   background-size: cover;
 }
 </style>

@@ -29,7 +29,7 @@ exports.authByEmail = async function (req, res){
         }
 
         if (!user) {
-            return res.status(404).json({ message: 'User Not Found' })
+            return res.status(400).json({ message: 'User Not Found' })
         }
 
         let head = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'jwt' })).toString('base64')
@@ -54,24 +54,80 @@ exports.register = async function (req, res){
     const phoneNumber = req.body.phoneNumber
     const fullName = req.body.fullName
 
-    // TODO email, password, etc. validation
+    if (IsNullOrWhiteSpace(email) || IsNullOrWhiteSpace(password) || IsNullOrWhiteSpace(phoneNumber) || IsNullOrWhiteSpace(fullName)) {
+        return res.status(400).json({message: 'Fields must be not empty'})
+    }
 
-    const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
+    if (!ValidateEmail(email)) {
+        return res.status(405).send({ message: 'This email is incorrect' });
+    }
 
-    const newUser = new User()
-    newUser.email = email
-    newUser.phoneNumber = phoneNumber
-    newUser.fullName = fullName
-    newUser.passwordHash = passwordHash
-    newUser.isEmailVerified = false
+    if (!ValidatePhoneNumber(phoneNumber)) {
+        return res.status(406).send({ message: 'This phone number is incorrect' });
+    }
 
-    newUser.save(function (err) {
+    User.findOne( {email: email}, function (err, user) {
         if (err) {
             console.error(err)
-            return res.status(500).json({ message: 'Internal Error' })
+            return res.status(500).json({message: 'Internal Error'})
         }
 
-        // TODO email verifying
-        res.status(201).json(newUser)
+        if (user) {
+            return res.status(405).send({ message: 'This email is already busy' });
+        }
+
+        User.findOne( {phoneNumber: phoneNumber}, function (err, user) {
+            if (err) {
+                console.error(err)
+                return res.status(500).json({message: 'Internal Error'})
+            }
+
+            if (user) {
+                return res.status(406).json({ message: 'This phone number is already busy' });
+            }
+
+            const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+            if(password.match(passwordRegex) == null)
+            {
+                return res.status(409).json({ message: 'Password is incorrect' });
+            }
+
+            const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
+
+            const newUser = new User()
+            newUser.email = email
+            newUser.phoneNumber = phoneNumber
+            newUser.fullName = fullName
+            newUser.passwordHash = passwordHash
+            newUser.isEmailVerified = false
+
+            newUser.save(function (err) {
+                if (err) {
+                    console.error(err)
+                    return res.status(500).json({ message: 'Internal Error' })
+                }
+
+                // TODO email verifying
+                res.status(201).json(newUser)
+            })
+        })
     })
+}
+
+function IsNullOrWhiteSpace(str) {
+    return str == null || str.trim() === ''
+}
+
+function ValidateEmail (email) {
+    return String(email)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+}
+
+function ValidatePhoneNumber(phoneNumber) {
+    return phoneNumber.match(
+        /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/
+    );
 }

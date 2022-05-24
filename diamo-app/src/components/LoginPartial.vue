@@ -1,9 +1,5 @@
 <template>
-  <div v-if="!user">
-    <button @click="showModal" style="background-color: #E8D58C; border-radius: 30px; width: 175px" class="btn shadow">Начать</button>
-    <LoginModal ref="loginModal"/>
-  </div>
-  <div v-else>
+  <div v-if="user">
     <div class="dropdown text-end">
       <a style="color: white" href="#" class="d-block text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
         <img style="border: 1px solid white; padding: 3px;" src="../assets/user.png" alt="My profile" width="35" height="35" class="rounded-circle">
@@ -13,9 +9,13 @@
         <li><a class="dropdown-item" href="#">Profile</a></li>
         <li><a class="dropdown-item" href="#">Orders</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><a @click="signOut" class="dropdown-item" href="#">Sign out</a></li>
       </ul>
     </div>
+  </div>
+  <div v-else>
+    <button @click="showModal" style="background-color: #E8D58C; border-radius: 30px; width: 175px" class="btn shadow">Начать</button>
+    <LoginModal ref="loginModal"/>
   </div>
 </template>
 
@@ -31,7 +31,8 @@ export default {
     const store = useStore()
 
     return {
-      user: computed(() => store.getters.user )
+      user: computed(() => store.getters.user ),
+      signOut: () => { store.dispatch('signOut') }
     }
   },
   methods: {

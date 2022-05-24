@@ -27,8 +27,37 @@ export default {
     actions: {
         // eslint-disable-next-line no-unused-vars
         apiRegister ({ state, commit, dispatch }, data = null) {
+            commit('registerError', null);
+
+            if (IsNullOrWhiteSpace(state.registerFullName)) {
+                commit('registerError', 'Имя, фамилия не должны быть пустыми')
+                return
+            }
+            else if (IsNullOrWhiteSpace(state.registerEmail)) {
+                commit('registerError', 'Эл. почта не должна быть пустой')
+                return
+            }
+            else if (IsNullOrWhiteSpace(state.registerPhoneNumber)) {
+                commit('registerError', 'Номер телефона не должен быть пустым')
+                return
+            }
+            else if (IsNullOrWhiteSpace(state.registerPassword)) {
+                commit('registerError', 'Пароль не должен быть пустым')
+                return
+            }
+
+            if (!ValidateEmail(state.registerEmail)) {
+                commit('registerError', 'Неправильная эл. почта')
+                return
+            }
+
+            if (!ValidatePhoneNumber(state.registerPhoneNumber)) {
+                commit('registerError', 'Неправильный номер телефона')
+                return
+            }
+
             if (state.registerPassword != state.registerRepeatPassword) {
-                commit('registerError', 'Passwords aren`t matching')
+                commit('registerError', 'Пароли не совпадают')
                 return
             }
 
@@ -53,12 +82,52 @@ export default {
                     else if (res.status === 500) {
                         commit('registerError', 'Ошибка сервера')
                     }
+                    else if (res.status === 405) {
+                        commit('registerError', 'Эл. почта неправильная/занята')
+                    }
+                    else if (res.status === 406) {
+                        commit('registerError', 'Номер телефона неправильный/занят')
+                    }
+                    else if (res.status === 409) {
+                        commit('registerError', 'Пароль должен содержать от 6 до 20 символов, хотя бы одну цифру, одну заглавную букву, и одну строчную букву')
+                    }
+                    else if (res.status === 400) {
+                        commit('registerError', 'Поля не должны быть пустыми')
+                    }
                 })
                 .then(json => {
-                    console.log(json)
+                    if (json) {
+                        commit('loginEmail', state.registerEmail)
+                        commit('loginPassword', state.registerPassword)
+                        dispatch('apiLogin')
+
+                        commit('registerError', null);
+                        commit('registerEmail', '');
+                        commit('registerPassword', '');
+                        commit('registerRepeatPassword', '');
+                        commit('registerFullName', '');
+                        commit('registerPhoneNumber', '');
+                    }
                 })
                 .catch(err => commit('registerError', err))
         }
     }
+}
 
+function IsNullOrWhiteSpace(str) {
+    return str == null || str.trim() === ''
+}
+
+function ValidateEmail (email) {
+    return String(email)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+}
+
+function ValidatePhoneNumber(phoneNumber) {
+    return phoneNumber.match(
+        /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/
+    );
 }
