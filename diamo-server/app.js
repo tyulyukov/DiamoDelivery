@@ -11,6 +11,7 @@ let mongoose = require("mongoose");
 let indexRouter = require('./routes/index');
 let mediaConverterRouter = require('./routes/media-converter');
 let companiesRouter = require('./routes/companies');
+let profileRouter = require('./routes/profile');
 
 let app = express();
 
@@ -39,8 +40,9 @@ app.use(authController.middlewareAuth)
 app.use('/', indexRouter);
 app.use('/media', mediaConverterRouter);
 app.use('/companies', companiesRouter);
-app.post('/auth', authController.authByEmail)
-app.post('/register', authController.register)
+app.post('/auth', authController.authByEmail);
+app.post('/register', authController.register);
+app.use('/profile', profileRouter);
 
 let connectionString = "mongodb+srv://tyulyukov:buDFZ4ws9ShY3rw7@cluster0.docye.mongodb.net/DiamoDatabase?retryWrites=true&w=majority";
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) { if (err) console.error(err) } )

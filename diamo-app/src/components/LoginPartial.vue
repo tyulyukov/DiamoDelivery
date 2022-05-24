@@ -6,10 +6,10 @@
         {{ user.fullName }}
       </a>
       <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><a class="dropdown-item" href="#">Orders</a></li>
+        <li><a class="dropdown-item" href="/profile">Профиль</a></li>
+        <li><a class="dropdown-item" href="#">Заказы</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a @click="signOut" class="dropdown-item" href="#">Sign out</a></li>
+        <li><a @click="signOut" class="dropdown-item" href="#">Выйти из аккаунта</a></li>
       </ul>
     </div>
   </div>

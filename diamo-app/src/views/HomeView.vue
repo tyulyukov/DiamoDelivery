@@ -33,7 +33,7 @@
 
         <div id="companies" v-if="companies">
           <div class="row">
-            <div class="col-3 py-3" v-for="company in companies" :key="company._id">
+            <div class="col-lg-3 col-md-4 col-sm-6 py-3" v-for="company in companies" :key="company._id">
               <CompanyCard :company="company"/>
             </div>
           </div>
@@ -41,7 +41,7 @@
 
         <div style="text-align: center" id="placeholders" v-else>
           <div class="row">
-            <div class="col-3 py-3" v-for="i in 10" :key="i">
+            <div class="col-lg-3 col-md-4 col-sm-6 py-3" v-for="i in 10" :key="i">
               <div class="card" aria-hidden="true">
                 <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect></svg>
                 <div class="card-body">

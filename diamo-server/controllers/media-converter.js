@@ -13,7 +13,7 @@ exports.uploadImage = function (request, response) {
             return response.status(422).json({message: "Uploaded file have unsupported type"})
         }
 
-        let relativePath = 'storage/temp/' + Date.now() + 'upload.webp'
+        let relativePath = 'storage/uploads/' + Date.now() + 'upload.webp'
         let absolutePath = path.join(__dirname, '../public/', relativePath)
 
         const result = webp.cwebp(originalPath, absolutePath,"-q 80","-v");

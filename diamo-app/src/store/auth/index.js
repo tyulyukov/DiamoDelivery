@@ -1,5 +1,6 @@
 import register from "./register"
 import login from "./login"
+import profile from "./profile"
 
 export default {
     state: {
@@ -32,6 +33,7 @@ export default {
     },
     modules: {
         register,
-        login
+        login,
+        profile
     }
 }

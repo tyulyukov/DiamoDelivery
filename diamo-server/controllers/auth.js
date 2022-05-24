@@ -73,7 +73,7 @@ exports.register = async function (req, res){
         }
 
         if (user) {
-            return res.status(405).send({ message: 'This email is already busy' });
+            return res.status(405).json({ message: 'This email is already busy' });
         }
 
         User.findOne( {phoneNumber: phoneNumber}, function (err, user) {
