@@ -11,6 +11,15 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: () => import('../views/MyProfileView.vue')
+  },
+  {
+    path: '/companies/:id',
+    name: 'company',
+    component: () => import('../views/CompanyView.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('../views/NotFoundView.vue')
   }
 ]
 
