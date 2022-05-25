@@ -6,7 +6,9 @@ export default {
         registerPhoneNumber: '',
         registerPassword: '',
         registerRepeatPassword: '',
-        registerError: null
+        registerError: null,
+        registerEmailVerificationNeeded: false,
+        resendEmail: '',
     },
     getters: {
         registerFullName: (state) => state.registerFullName,
@@ -15,18 +17,22 @@ export default {
         registerPassword: (state) => state.registerPassword,
         registerRepeatPassword: (state) => state.registerRepeatPassword,
         registerError: (state) => state.registerError,
+        registerEmailVerificationNeeded: (state) => state.registerEmailVerificationNeeded,
+        resendEmail: (state) => state.resendEmail
     },
     mutations: {
         registerFullName: (state, data) => { state.registerFullName = data },
         registerPhoneNumber: (state, data) => { state.registerPhoneNumber = data },
-        registerEmail: (state, data) => { state.registerEmail = data },
+        registerEmail: (state, data) => { state.registerEmail = data, state.registerEmailVerificationNeeded = false },
         registerPassword: (state, data) => { state.registerPassword = data },
         registerRepeatPassword: (state, data) => { state.registerRepeatPassword = data },
         registerError: (state, data) => { state.registerError = data },
+        registerEmailVerificationNeeded: (state, data) => { state.registerEmailVerificationNeeded = data },
+        resendEmail: (state, data) => { state.resendEmail = data }
     },
     actions: {
         // eslint-disable-next-line no-unused-vars
-        apiRegister ({ state, commit, dispatch }, data = null) {
+        apiRegister ({ state, commit, dispatch }) {
             commit('registerError', null);
 
             if (IsNullOrWhiteSpace(state.registerFullName)) {
@@ -76,8 +82,9 @@ export default {
                 body: JSON.stringify(user)
             })
                 .then(res => {
-                    if (res.status === 201) {
-                        return res.json()
+                    if (res.status === 200) {
+                        commit('resendEmail', state.registerEmail)
+                        commit('registerEmailVerificationNeeded', true)
                     }
                     else if (res.status === 500) {
                         commit('registerError', 'Ошибка сервера')
@@ -95,18 +102,24 @@ export default {
                         commit('registerError', 'Поля не должны быть пустыми')
                     }
                 })
-                .then(json => {
-                    if (json) {
-                        commit('loginEmail', state.registerEmail)
-                        commit('loginPassword', state.registerPassword)
-                        dispatch('apiLogin')
+                .catch(err => commit('registerError', err))
+        },
 
-                        commit('registerError', null);
-                        commit('registerEmail', '');
-                        commit('registerPassword', '');
-                        commit('registerRepeatPassword', '');
-                        commit('registerFullName', '');
-                        commit('registerPhoneNumber', '');
+        // eslint-disable-next-line no-unused-vars
+        apiResendLink ({ state, commit, dispatch }) {
+            fetch('http://localhost:3030/resend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: state.resendEmail })
+            })
+                .then(res => {
+                    if (res.status === 500) {
+                        commit('registerError', 'Ошибка сервера')
+                    }
+                    else if (res.status === 400) {
+                        commit('registerError', 'Неправильная почта')
                     }
                 })
                 .catch(err => commit('registerError', err))

@@ -3,21 +3,27 @@ export default {
     state: {
         loginEmail: '',
         loginPassword: '',
-        loginError: null
+        loginError: null,
+        loginEmailVerificationNeeded: false
     },
     getters: {
         loginEmail: (state) => state.loginEmail,
         loginPassword: (state) => state.loginPassword,
         loginError: (state) => state.loginError,
+        loginEmailVerificationNeeded: (state) => state.loginEmailVerificationNeeded
     },
     mutations: {
-        loginEmail: (state, data) => { state.loginEmail = data },
+        loginEmail: (state, data) => { state.loginEmail = data, state.loginEmailVerificationNeeded = false },
         loginPassword: (state, data) => { state.loginPassword = data },
         loginError: (state, data) => { state.loginError = data },
+        loginEmailVerificationNeeded: (state, data) => { state.loginEmailVerificationNeeded = data }
     },
     actions: {
         // eslint-disable-next-line no-unused-vars
         apiLogin ({ state, commit, dispatch }) {
+            commit('loginEmailVerificationNeeded', false)
+            commit('loginError', null);
+
             const user = {
                 email: state.loginEmail,
                 password: state.loginPassword
@@ -36,6 +42,10 @@ export default {
                     }
                     else if (res.status === 400) {
                         commit('loginError', 'Неправильный логин или пароль')
+                    }
+                    else if (res.status === 406) {
+                        commit('resendEmail', state.loginEmail)
+                        commit('loginEmailVerificationNeeded', true)
                     }
                     else if (res.status === 500) {
                         commit('loginError', 'Ошибка сервера')

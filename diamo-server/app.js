@@ -42,6 +42,8 @@ app.use('/media', mediaConverterRouter);
 app.use('/companies', companiesRouter);
 app.post('/auth', authController.authByEmail);
 app.post('/register', authController.register);
+app.get('/confirmation/:email/:token', authController.confirmEmail);
+app.post('/resend', authController.resendLink);
 app.use('/profile', profileRouter);
 
 let connectionString = "mongodb+srv://tyulyukov:buDFZ4ws9ShY3rw7@cluster0.docye.mongodb.net/DiamoDatabase?retryWrites=true&w=majority";
