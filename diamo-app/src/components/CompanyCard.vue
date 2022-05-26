@@ -1,10 +1,12 @@
 <template>
-  <div style="cursor: pointer" class="card company-card">
-    <div class="card-img-top company-img" v-bind:style="{ 'background-image': 'url(http://localhost:3030/' + company.imageUrl + ')' }"></div>
-    <div class="card-body">
-      <h5 class="card-title fw-bold">{{ company.name }}</h5>
+  <a :href="'/companies/' + company._id" style="text-decoration: none">
+    <div style="cursor: pointer" class="card company-card">
+      <div class="card-img-top company-img" v-bind:style="{ 'background-image': 'url(http://localhost:3030/' + company.imageUrl + ')' }"></div>
+      <div class="card-body">
+        <h5 class="card-title fw-bold" style="color: black">{{ company.name }}</h5>
+      </div>
     </div>
-  </div>
+  </a>
 </template>
 
 <script>

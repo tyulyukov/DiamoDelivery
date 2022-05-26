@@ -1,6 +1,4 @@
 <template>
-  <DiamoHeader class="bg-search"/>
-
   <main>
     <section class="pt-5 bg-search">
       <div class="py-lg-5">
@@ -8,7 +6,7 @@
           <h1 style="color: white; font-weight: bolder">Время насладиться едой</h1>
           <h6 style="color: white; font-weight: lighter">Найдите ресторан<span v-if="city"> в {{city}}</span></h6>
 
-          <div class="input-group input-group-lg mb-3 py-5">
+          <div class="input-group input-group-lg py-5">
             <span class="input-group-text">
               <svg viewBox="0 0 24 24" width="1em" height="1em" role="presentation" focusable="false" aria-hidden="true"><path d="M12 13c-1.096 0-1.984-.93-1.984-2.077 0-1.147.888-2.077 1.984-2.077s1.984.93 1.984 2.077C13.984 12.07 13.096 13 12 13m0-9c-3.866 0-7 3.187-7 7.071 0 1.737.63 3.323 1.668 4.55L12 22l5.332-6.379A7.016 7.016 0 0019 11.071C19 7.187 15.866 4 12 4" fill-rule="evenodd"></path></svg>
             </span>
@@ -20,8 +18,8 @@
     </section>
 
     <section>
-      <div class="bg-pizza" style="height: 500px;">
-        <svg style="height: 100px; width: 100%; fill: #212121;" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <div class="bg-pizza" style="height: 40vh; max-height: 70vh">
+        <svg style="height: 9vw; width: 100%; fill: #212121;" viewBox="0 0 100 100" preserveAspectRatio="none">
           <polygon points="0 0, 0 100, 100 0, 100 0"></polygon>
         </svg>
       </div>
@@ -63,20 +61,16 @@
       </div>
     </section>
   </main>
-
-  <DiamoFooter/>
 </template>
 
 <script>
 import { useStore } from 'vuex'
 import {computed} from "vue";
-import DiamoFooter from "@/components/DiamoFooter";
 import CompanyCard from "@/components/CompanyCard";
-import DiamoHeader from "@/components/DiamoHeader";
 
 export default {
   name: 'HomeView',
-  components: {DiamoHeader, CompanyCard, DiamoFooter},
+  components: {CompanyCard},
   setup () {
     document.title = "Главная | Diamo Delivery";
 
@@ -98,8 +92,6 @@ export default {
 }
 
 .bg-pizza {
-  background-repeat: no-repeat;
-  background-image: url('/src/assets/pizza.jpg');
-  background-size: cover;
+  background: url('/src/assets/pizza.jpg') center center / cover no-repeat;
 }
 </style>

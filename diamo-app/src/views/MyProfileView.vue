@@ -1,6 +1,4 @@
 <template>
-  <DiamoHeader style="background-color: #212121;"/>
-
   <main class="py-5 mt-5">
     <section class="py-3">
       <div class="container">
@@ -120,20 +118,15 @@
       </div>
     </section>
   </main>
-
-  <DiamoFooter/>
 </template>
 
 <script>
 import { useStore } from 'vuex'
 import { computed } from 'vue'
-import DiamoHeader from "@/components/DiamoHeader";
-import DiamoFooter from "@/components/DiamoFooter";
 import router from "@/router";
 
 export default {
   name: "MyProfileView",
-  components: {DiamoFooter, DiamoHeader},
   setup() {
     const store = useStore()
 
